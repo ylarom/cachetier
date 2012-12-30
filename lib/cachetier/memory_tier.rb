@@ -26,6 +26,10 @@ module Cachetier
 	  	return expiration_time < Time.now
 	  end
 
+    def keys
+    	return @cache.keys
+    end
+
 	protected
 
 	  def set(key, value, ttl)

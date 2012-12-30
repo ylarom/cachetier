@@ -21,15 +21,15 @@ module Cachetier
     end
 
     def []=(key, value)
+      sweep_if_needed
     	set(key, value, ttl)
-    	sweep_if_needed
     end
 
   protected
 
     def sweep_if_needed
     	if high_watermark && low_watermark
-  	  	sweep if size > high_watermark
+  	  	sweep if size >= high_watermark
   	  end
     end
 
@@ -43,7 +43,7 @@ module Cachetier
     def do_sweep(force)
   	  curr_size = size
   	  keys.each do |key|
-  	  	if force || expired(key)
+  	  	if force || expired?(key)
   	  		reset(key)
   	  		curr_size -= 1
   	  		break if curr_size <= low_watermark
