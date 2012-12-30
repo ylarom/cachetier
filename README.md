@@ -1,6 +1,6 @@
 # Cachetier
 
-TODO: Write a gem description
+Multi-tiered cache
 
 ## Installation
 
@@ -18,7 +18,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+	require 'cachetier'
+
+	Cachetier
 
 ## Contributing
 

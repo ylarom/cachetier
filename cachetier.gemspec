@@ -4,8 +4,8 @@ require File.expand_path('../lib/cachetier/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Yuval Larom"]
   gem.email         = ["yuval@ftbpro.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Multi-tiered cache}
+  gem.summary       = %q{Cache your data on multiple tiers: Redis, Memcached, Mongo, locally, etc}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "cachetier"
   gem.require_paths = ["lib"]
   gem.version       = Cachetier::VERSION
+
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'rspec'
 end
