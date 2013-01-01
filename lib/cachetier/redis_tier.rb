@@ -3,9 +3,12 @@ require 'cachetier/tier'
 module Cachetier
 	class RedisTier < Tier
 	  
-	  def initialize(redis, ttl, high_watermark = nil, low_watermark = nil)
-	  	super(ttl, high_watermark, low_watermark)
-	  	@redis = redis
+	  register_tier_class :redis, RedisTier
+
+	  def initialize(options)
+	  	super(options)
+	  	@redis = options[redis]
+	  	raise "Option :redis is required" if !@redis
 	  end
 
 	  def get_val_and_expiration_time(key)
@@ -25,6 +28,10 @@ module Cachetier
 	  def expired?(key)
 	  	return @redis.get(key).nil?
 	  end
+
+    def sweepable?
+    	false
+    end
 
 	protected
 

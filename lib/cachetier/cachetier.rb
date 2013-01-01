@@ -2,45 +2,22 @@ require 'cachetier/tier'
 
 module Cachetier
 
-  class NilValue
-  	def self.value
-  	  @@value ||= NilValue.new
-  	end
+  def self.included(base)
+    base.send(:extend, ClassMethods)
   end
-	
-	class Base
 
-    attr_reader :tiers, :getter_block
+  module ClassMethods
 
-		def initialize(*tiers, &getter_block)
-			@tiers = tiers
-			@getter_block = getter_block
-			raise "Tiers cannot be nil" if !tiers
-			raise "Tiers cannot be empty" if tiers.empty?
-		end
+    def cachetier(method_name, options, &block)
+    	cache = Cachetier::Cache.new(options, &block)
+    	(@@cachetiers ||= {})[method_name] = cache
 
-		def [](key)
-			prev_tiers = []
-			tiers.each do |tier|
-				value = tier[key]
-				if value 
-					prev_tiers.each do |prev_tier|
-						prev_tier[key] = value
-					end
-					return nil if value == NilValue.value
-					return value
-				end
-			end
-			self[key] = getter_block.call if getter_block
-		end
-
-		def []=(key, value)
-			tiers.each do |tier|
-				tier[key] = value
-			end
-			return value
-		end
+      self.send(:define_method, method_name) do |key|
+      	@@cachetiers[method_name][key]
+      end
+    end
 
   end
+
 
 end

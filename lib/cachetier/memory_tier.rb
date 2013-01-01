@@ -3,8 +3,10 @@ require 'cachetier/tier'
 module Cachetier
 	class MemoryTier < Tier
 	  
-	  def initialize(ttl, high_watermark = nil, low_watermark = nil)
-	  	super(ttl, high_watermark, low_watermark)
+	  register_tier_class :mem, MemoryTier
+
+	  def initialize(options = nil)
+	  	super(options)
 
 	  	@cache = {}
 	  end
@@ -29,6 +31,7 @@ module Cachetier
     def keys
     	return @cache.keys
     end
+
 
 	protected
 
