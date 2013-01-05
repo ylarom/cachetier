@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test, :cucumber do
-  gem "rspec-rails"
+  gem "rspec"
+  gem "rspec-mocks"
 end
 

@@ -23,7 +23,6 @@ describe Cachetier::Tier do
 
     Cachetier::Tier.new(writable: false, sweepable: true).writable?.should be_false
     Cachetier::Tier.new(writable: false, sweepable: true).sweepable?.should be_true
-
   end
 
   

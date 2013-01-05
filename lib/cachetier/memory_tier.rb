@@ -1,43 +1,41 @@
 require 'cachetier/tier'
 
 module Cachetier
-	class MemoryTier < Tier
-	  
-	  register_tier_class :mem, MemoryTier
+  class MemoryTier < Tier
+    
+    register_tier_class :mem, MemoryTier
 
-	  def initialize(options = nil)
-	  	super(options)
-
-	  	@cache = {}
-	  end
-
-	  def get_val_and_expiration_time(key)
-	  	val, expiration_time = @cache[key]
-	  end
-
-	  def reset(key)
-	  	@cache.delete(key)
-	  end
-
-	  def size
-	  	@cache.size
-	  end
-
-	  def expired?(key)
-	  	val, expiration_time = @cache[key]
-	  	return expiration_time < Time.now
-	  end
-
-    def keys
-    	return @cache.keys
+    def initialize(options = nil)
+      super
+      @cache = {}
     end
 
+    def get_val_and_expiration_time(key)
+      val, expiration_time = @cache[key]
+    end
 
-	protected
+    def reset(key)
+      @cache.delete(key)
+    end
 
-	  def set(key, value, ttl)
-	  	@cache[key] = [value, Time.now + ttl]
-	  end
+    def size
+      @cache.size
+    end
 
-	end
+    def keys
+      return @cache.keys
+    end
+
+    def expired?(key)
+      val, expiration_time = get_val_and_expiration_time(key)
+      return expiration_time < Time.now
+    end
+
+  protected
+
+    def set(key, value, ttl)
+      @cache[key] = [value, Time.now + ttl.to_f]
+    end
+
+  end
 end

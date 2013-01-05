@@ -10,8 +10,6 @@ module Cachetier
       return @@tier_classes[name]
     end
     
-    attr_reader :ttl, :high_watermark, :low_watermark
-
     DEFAULTS = {
       ttl: 0,
       high_watermark: nil,
@@ -19,10 +17,10 @@ module Cachetier
     }
 
     def initialize(options = nil)
-      @options = DEFAULTS.dup.merge((options || {}).dup)
+      @options = DEFAULTS.merge(options || {})
       raise "TTL must be a positive number" if ttl && ttl < 0
-    	raise "High watermark must be a positive number" if high_watermark && high_watermark <= 0
-    	raise "Low watermark must be a positive number"  if low_watermark  && low_watermark  <= 0
+      raise "High watermark must be a positive number" if high_watermark && high_watermark <= 0
+      raise "Low watermark must be a positive number"  if low_watermark  && low_watermark  <= 0
       raise "High watermark must be larger than lower watermark" if high_watermark && low_watermark && high_watermark <= low_watermark
     end
 
@@ -39,20 +37,24 @@ module Cachetier
     end
 
     def [](key)
-    	val, expiration_time = get_val_and_expiration_time(key)
-    	
-    	if expiration_time && Time.now > expiration_time
-    		val = nil
-    		reset key
-    	end
+      val, expiration_time = get_val_and_expiration_time(key)
+      
+      if expiration_time && Time.now > expiration_time
+        val = nil
+        reset key
+      end
 
-    	return val
+      return val
+    end
+
+    def reset(key)
+      raise NotImplementedError
     end
 
     def []=(key, value)
       raise "Read-only tier" if !writable?
       sweep_if_needed if sweepable?
-    	set(key, value, ttl)
+      set(key, value, ttl)
     end
 
     def writable?
@@ -68,31 +70,40 @@ module Cachetier
   protected
 
     def sweep_if_needed
-    	if high_watermark && low_watermark
-  	  	sweep if size >= high_watermark
-  	  end
+      if high_watermark && low_watermark
+        sweep if size >= high_watermark
+      end
     end
 
     def sweep
-    	do_sweep(false)
-    	if size >= high_watermark
-    	  do_sweep(true)
-    	end
+      do_sweep(force: false)
+      if size >= high_watermark
+        do_sweep(force: true)
+      end
     end
 
-    def do_sweep(force)
+    def do_sweep(options = {force: false})
+      force = options[:force]
       raise "Read-only tier" if !writable?
       raise "Un-sweeable tier" if !sweepable?
-  	  curr_size = size
-  	  keys.each do |key|
-  	  	if force || expired?(key)
-  	  		reset(key)
-  	  		curr_size -= 1
-  	  		break if curr_size <= low_watermark
-  	  	end
-  	  end
+      curr_size = size
+      keys.each do |key| 
+        if force || expired?(key)
+          reset(key)
+          curr_size -= 1
+          break if curr_size <= low_watermark
+        end
+      end
     end
 
+    def get_val_and_expiration_time(key)
+      raise NotImplementedError
+    end
+
+
+    def keys
+      raise NotImplementedError
+    end
   end
 
 end

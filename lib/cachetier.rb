@@ -1,4 +1,6 @@
-require "cachetier/cachetier"
+require "cachetier/nil_value"
+require "cachetier/tier"
 require "cachetier/cache"
 require "cachetier/memory_tier"
+require "cachetier/cachetier"
 require "cachetier/version"

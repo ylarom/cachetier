@@ -3,27 +3,14 @@ require 'cachetier'
 
 describe Cachetier::MemoryTier do
 
-	it "should check modify tier writability and sweepability" do
-
-    Cachetier::MemoryTier.new.writable?.should be_true
-    Cachetier::MemoryTier.new.sweepable?.should be_true
-
-    Cachetier::MemoryTier.new(writable: true, sweepable: false).writable?.should be_true
-    Cachetier::MemoryTier.new(writable: true, sweepable: false).sweepable?.should be_false
-
-    Cachetier::MemoryTier.new(writable: false, sweepable: true).writable?.should be_false
-    Cachetier::MemoryTier.new(writable: false, sweepable: true).sweepable?.should be_true
-
-  end
-
-  it "should save data for 2 sec then expire it" do
+	it "should save data for 200ms sec then expire it" do
     cache = Cachetier::MemoryTier.new(ttl: 0.2)
     cache[:a] = 1
     cache[:a].should == 1
     sleep 0.1
     cache[:a].should == 1
     sleep 0.2
-    cache[:a].should == nil
+    cache[:a].should be_nil
   end
 
   it "should sweep oldest keys when reaching high_watermark until only low_watermark items remain" do
