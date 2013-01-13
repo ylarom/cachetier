@@ -10,9 +10,10 @@ module Cachetier
 
     def cachetier(method_name, options, &block)
     	cache = Cachetier::Cache.new(options, &block)
-    	(@@cachetiers ||= {})[method_name] = cache
+      @@cachetiers ||= {}
+    	@@cachetiers[method_name] = cache
 
-      self.send(:define_method, method_name) do |key|
+      self.define_method(method_name) do |key|
       	@@cachetiers[method_name][key]
       end
     end
