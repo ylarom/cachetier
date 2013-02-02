@@ -43,7 +43,7 @@ module Cachetier
         val = nil
         reset key
       end
-
+      
       return val
     end
 
