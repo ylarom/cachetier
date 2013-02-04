@@ -85,7 +85,7 @@ describe Cachetier::Cache do
   		end
   	end
 
-  	DummyClass1.new.get_cached_val(:dummy_key).should == :dummy_cached_value
+  	DummyClass1.get_cached_val(:dummy_key).should == :dummy_cached_value
   end
 
   it "should create a cachetier for class and never return the cached value" do
@@ -98,7 +98,7 @@ describe Cachetier::Cache do
   		end
   	end
 
-  	DummyClass2.new.get_cached_val(:dummy_key).should == :dummy_uncached_value
+  	DummyClass2.get_cached_val(:dummy_key).should == :dummy_uncached_value
   end
 
   it "should fallback from one tier to the next" do
@@ -114,7 +114,7 @@ describe Cachetier::Cache do
 		# the first tier is always expired, the second is always fresh. 
 		# the request should try the first tier, fail, and get from the fresh tier
 
-  	DummyClass3.new.get_cached_val(:dummy_key).should == :dummy_cached_value
+  	DummyClass3.get_cached_val(:dummy_key).should == :dummy_cached_value
   end
 
   it "should update expired tiers" do
@@ -128,11 +128,10 @@ describe Cachetier::Cache do
 
   	end
 
-  	dummy = DummyClass4.new
-  	dummy.get_cached_val(:whatever).should == :initial_value
+  	DummyClass4.get_cached_val(:whatever).should == :initial_value
   	sleep 0.2
-  	dummy.get_cached_val(:whatever).should == :set_value   # returned by getter proc
-  	dummy.get_cached_val(:whatever).should == [:single_value_tier, :set_value] # returned by tier
+  	DummyClass4.get_cached_val(:whatever).should == :set_value   # returned by getter proc
+  	DummyClass4.get_cached_val(:whatever).should == [:single_value_tier, :set_value] # returned by tier
   end
 
 
