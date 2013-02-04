@@ -22,9 +22,18 @@ module Cachetier
 		def [](key)
 			prev_tiers = []
 
-			tiers.each do |tier|
+			# some tiers override the key. save original clone of it
+		  orig_key = begin 
+		  	key.clone
+		  rescue
+		    key
+		  end
+
+			tiers.each do |tier|				
 				value = tier[key]
-				if value 
+				key = orig_key
+
+				if value
 					update_tiers(key, value, prev_tiers)
 					return nil if value == NilValue.value
 					return value
@@ -32,10 +41,12 @@ module Cachetier
 				prev_tiers << tier
 			end
 
-			self[key] = getter_block.call(key) if getter_block
+			# block might change key
+			self[orig_key] = getter_block.call(key) if getter_block
 		end
 
 		def []=(key, value)
+
 			value = NilValue if value.nil?
 			tiers.each do |tier|
 				tier[key] = value if tier.writable?
