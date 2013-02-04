@@ -11,7 +11,6 @@ module Cachetier
   end
   
   def self.included(base)
-    p ["cachetier included"]
     base.send(:extend, ClassMethods)
   end
 
@@ -55,7 +54,8 @@ module Cachetier
         # create a block for cachetier that calls the uncached version
         block = proc { |key| self.send(uncached_method_name, key) } 
       end
-      
+
+
       options = Cachetier::config.merge(options || {})
     	cache = Cachetier::Cache.new(options, &block)
     	(@@cachetiers ||= {})[method_name] = cache
